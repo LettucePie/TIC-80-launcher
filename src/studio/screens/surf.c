@@ -533,6 +533,7 @@ static void goBackDir(Surf* surf)
 
 static void changeDirectory(Surf* surf, const char* name)
 {
+    printf("\nsurf.c changeDirectory Called");
     if (strcmp(name, "..") == 0)
     {
         goBackDir(surf);
@@ -573,6 +574,7 @@ static void onLoadCommandConfirmed(Studio* studio, bool yes, void* data)
 
 static void onPlayCart(void* data)
 {
+    printf("\nsurf.c onPlayCart Called");
     Surf* surf = data;
     SurfItem* item = getMenuItem(surf);
 
@@ -606,6 +608,7 @@ static void loadCart(Surf* surf)
 
 static void move(Surf* surf, s32 dir)
 {
+    printf("\nsurf.c move Called");
     surf->menu.target = (surf->menu.pos + surf->menu.count + dir) % surf->menu.count;
 
     Anim* anim = surf->anim.move.items;

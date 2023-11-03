@@ -1064,6 +1064,7 @@ void drawToolbar(Studio* studio, tic_mem* tic, bool bg)
 
 void setStudioEvent(Studio* studio, StudioEvent event)
 {
+    printf("\nstudio.c setStudioEvent Called");
     switch(studio->mode)
     {
     case TIC_CODE_MODE:     
@@ -1184,6 +1185,7 @@ void drawBitIcon(Studio* studio, s32 id, s32 x, s32 y, u8 color)
 
 static void initRunMode(Studio* studio)
 {
+    printf("\nstudio.c initRunMode Called");
     initRun(studio->run, 
 #if defined(BUILD_EDITORS)
         studio->console, 
@@ -1196,22 +1198,26 @@ static void initRunMode(Studio* studio)
 #if defined(BUILD_EDITORS)
 static void initWorldMap(Studio* studio)
 {
+    printf("\nstudio.c initWorldMap Called");
     initWorld(studio->world, studio, studio->banks.map[studio->bank.index.map]);
 }
 
 static void initSurfMode(Studio* studio)
 {
+    printf("\nstudio.c initSurfMode Called");
     initSurf(studio->surf, studio, studio->console);
 }
 
 void gotoSurf(Studio* studio)
 {
+    printf("\nstudio.c gotoSurf Called");
     initSurfMode(studio);
     setStudioMode(studio, TIC_SURF_MODE);
 }
 
 void gotoCode(Studio* studio)
 {
+    printf("\nstudio.c gotoCode Called");
     setStudioMode(studio, TIC_CODE_MODE);
 }
 

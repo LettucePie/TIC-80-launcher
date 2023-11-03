@@ -1958,6 +1958,7 @@ static void exportSprites(Console* console, const char* filename, tic_tile* base
 
 static void* embedCart(Console* console, u8* app, s32* size)
 {
+    printf("\nconsole.c embedCard Called");
     tic_mem* tic = console->tic;
     u8* data = NULL;
     void* cart = newCart();
@@ -2369,6 +2370,7 @@ const char* readMetatag(const char* code, const char* tag, const char* comment);
 
 static CartSaveResult saveCartName(Console* console, const char* name)
 {
+    printf("\nconsole.c saveCartName Called");
     tic_mem* tic = console->tic;
 
     bool success = false;
@@ -2506,11 +2508,13 @@ static CartSaveResult saveCartName(Console* console, const char* name)
 
 static CartSaveResult saveCart(Console* console)
 {
+    printf("\nconsole.c saveCart Called");
     return saveCartName(console, NULL);
 }
 
 static void onSaveCommandConfirmed(Console* console)
 {
+    printf("\nconsole.c onSaveCommandConfirmed Called");
     CartSaveResult rom = saveCartName(console, console->desc->count ? console->desc->params->key : NULL);
 
     if(rom == CART_SAVE_OK)
@@ -2529,6 +2533,7 @@ static void onSaveCommandConfirmed(Console* console)
 
 static void onSaveCommand(Console* console)
 {
+    printf("\nconsole.c onSaveCommand Called");
     const char* param = console->desc->count ? console->desc->params->key : NULL;
 
     if(param && strlen(param) &&
@@ -2552,6 +2557,7 @@ static void onSaveCommand(Console* console)
 
 static void onRunCommand(Console* console)
 {
+    printf("\nconsole.c onRunCommand Called");
     commandDone(console);
 
     runGame(console->studio);

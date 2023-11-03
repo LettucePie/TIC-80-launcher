@@ -46,6 +46,7 @@ struct tic_net
 
 static void downloadSucceeded(emscripten_fetch_t *fetch) 
 {
+    printf("\nnet.c downloadSucceeded Called");
     FetchData* data = (FetchData*)fetch->userData;
 
     net_get_data getData = 
@@ -70,6 +71,7 @@ static void downloadSucceeded(emscripten_fetch_t *fetch)
 
 static void downloadFailed(emscripten_fetch_t *fetch) 
 {
+    printf("\nnet.c downloadFailed Called");
     FetchData* data = (FetchData*)fetch->userData;
 
     net_get_data getData = 
@@ -92,6 +94,7 @@ static void downloadFailed(emscripten_fetch_t *fetch)
 
 static void downloadProgress(emscripten_fetch_t *fetch) 
 {
+    printf("\nnet.c downloadProgress Called");
     FetchData* data = (FetchData*)fetch->userData;
 
     net_get_data getData = 
@@ -329,6 +332,7 @@ static void n3ds_net_apply_url(net_ctx *ctx, const char *url)
 
 tic_net* tic_net_create(const char* host)
 {
+    printf("\nnet.c tic_net_create Called");
     tic_net* net = (tic_net*)malloc(sizeof(tic_net));
 
     n3ds_net_init(net);
@@ -347,6 +351,7 @@ tic_net* tic_net_create(const char* host)
 
 void tic_net_get(tic_net* net, const char* url, net_get_callback callback, void* calldata)
 {
+    printf("\nnet.c tic_net_get Called");
     net_ctx ctx = 
     {
         .net = net,
@@ -363,17 +368,20 @@ void tic_net_get(tic_net* net, const char* url, net_get_callback callback, void*
 
 void tic_net_close(tic_net* net)
 {
+    printf("\nnet.c tic_net_close Called");
     n3ds_net_free(net);
     free(net);
 }
 
 void tic_net_start(tic_net *net)
 {
+    printf("\nnet.c tic_net_start Called");
     LightLock_Lock(&net->tick_lock);
 }
 
 void tic_net_end(tic_net *net)
 {
+    printf("\nnet.c tic_net_end Called");
     LightLock_Unlock(&net->tick_lock);
 }
 
