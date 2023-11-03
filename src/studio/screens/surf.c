@@ -549,6 +549,7 @@ static void onCartLoaded(void* data)
 {
     printf("\nsurf.c onCartLoaded Called");
     Surf* surf = data;
+    printf(data);
     runGame(surf->studio);
 }
 

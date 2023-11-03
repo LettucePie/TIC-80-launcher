@@ -711,6 +711,7 @@ static void onLoadDemoCommandConfirmed(Console* console, tic_script_config* scri
 
 static void onCartLoaded(Console* console, const char* name, const char* section)
 {
+    printf("\nconsole.c onCartLoaded Called");
     tic_api_reset(console->tic);
 
     if(!section)
@@ -766,15 +767,19 @@ typedef struct
 
 static void loadByHashDone(const u8* buffer, s32 size, void* data)
 {
+    printf("\nconsole.c loadByHashDone Called");
     LoadByHashData* loadByHashData = data;
     Console* console = loadByHashData->console;
+    printf("\nconsole.c loadByHashDone(data) = %s", loadByHashData->name);
 
     tic_cartridge* cart = newCart();
 
     SCOPE(free(cart))
     {
         tic_cart_load(cart, buffer, size);
+        printf("\nconsole.c loadByHashDone calling loadCartSection");
         loadCartSection(console, cart, loadByHashData->section);
+        printf("\nconsole.c loadByHashDone calling onCartLoaded");
         onCartLoaded(console, loadByHashData->name, loadByHashData->section);
     }
 
@@ -790,6 +795,8 @@ static void loadByHashDone(const u8* buffer, s32 size, void* data)
 
 static void loadByHash(Console* console, const char* name, const char* hash, const char* section, fs_done_callback callback, void* data)
 {
+    printf("\nconsole.c loadByHash Called");
+    printf("\nconsole.c loadByHash(name) = %s", name);
     console->active = false;
 
     LoadByHashData loadByHashData = { console, strdup(name), section ? strdup(section) : NULL, callback, data};
@@ -843,6 +850,7 @@ static bool printUsage(Console* console, const char* command);
 
 static void onLoadCommandConfirmed(Console* console)
 {
+    printf("\nconsole.c onLoadCommandConfirmed Called");
     if(console->desc->count > 0)
     {
         tic_mem* tic = console->tic;
@@ -901,7 +909,9 @@ static void onLoadCommandConfirmed(Console* console)
                 SCOPE(free(cart))
                 {
                     tic_cart_load(cart, data, size);
+                    printf("\nconsole.c onLoadCommandConfirmed calling loadCartSection(console, cart, section)");
                     loadCartSection(console, cart, section);
+                    printf("\nconsole.c onLoadCommandConfirmed calling onCartLoaded(console, name, section)");
                     onCartLoaded(console, name, section);
                 }
             }
@@ -916,7 +926,9 @@ static void onLoadCommandConfirmed(Console* console)
 
                     if(cart) SCOPE(free(cart))
                     {
+                        printf("\nconsole.c onLoadCommandConfirmed calling loadCartSection(console, cart, section)");
                         loadCartSection(console, cart, section);
+                        printf("\nconsole.c onLoadCommandConfirmed calling onCartLoaded(console, param, section)");
                         onCartLoaded(console, param, section);
                     }
                     else printError(console, "\npng cart loading error");
@@ -938,7 +950,9 @@ static void onLoadCommandConfirmed(Console* console)
                         SCOPE(free(cart))
                         {
                             tic_project_load(name, data, size, cart);
+                            printf("\nconsole.c onLoadCommandConfirmed calling loadCartSection(console, cart, section)");
                             loadCartSection(console, cart, section);
+                            printf("\nconsole.c onLoadCommandConfirmed calling onCartLoaded(console, name, section)");
                             onCartLoaded(console, name, section);
                         }
                     }
