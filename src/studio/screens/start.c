@@ -116,6 +116,7 @@ static void* _memmem(const void* haystack, size_t hlen, const void* needle, size
 
 void initStart(Start* start, Studio* studio, const char* cart)
 {
+    printf("\nstart.c initStart Called");
     enum duration {
         immediate = 0,
         one_second = TIC80_FRAMERATE,

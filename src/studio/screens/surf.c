@@ -546,12 +546,14 @@ static void changeDirectory(Surf* surf, const char* name)
 
 static void onCartLoaded(void* data)
 {
+    printf("\nsurf.c onCartLoaded Called");
     Surf* surf = data;
     runGame(surf->studio);
 }
 
 static void onLoadCommandConfirmed(Studio* studio, bool yes, void* data)
 {
+    printf("\nsurf.c onLoadCommandConfirmed Called");
     if(yes)
     {
         Surf* surf = data;

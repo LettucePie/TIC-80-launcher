@@ -1547,6 +1547,7 @@ bool studioCartChanged(Studio* studio)
 
 void runGame(Studio* studio)
 {
+    printf("\nstudio.c runGame called");
 #if defined(BUILD_EDITORS)
     if(studio->console->args.keepcmd 
         && studio->console->commands.count
