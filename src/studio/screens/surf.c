@@ -114,7 +114,7 @@ static void drawTopToolbar(Surf* surf, s32 x, s32 y)
 
 static SurfItem* getMenuItem(Surf* surf)
 {
-    printf("\nsurf.c getMenuItem Called");
+    //printf("\nsurf.c getMenuItem Called");
     return &surf->menu.items[surf->menu.pos];
 }
 
@@ -580,6 +580,9 @@ static void onPlayCart(void* data)
     printf("\nsurf.c onPlayCart Called");
     Surf* surf = data;
     SurfItem* item = getMenuItem(surf);
+    printf("\nsurf.c onPlayCart item->label = %s", item->label);
+    printf("\nsurf.c onPlayCart item->name = %s", item->name);
+    printf("\nsurf.c onPlayCart item->dir = %i", item->dir);
 
     studioCartChanged(surf->studio)
         ? confirmLoadCart(surf->studio, onLoadCommandConfirmed, surf)
@@ -588,6 +591,7 @@ static void onPlayCart(void* data)
 
 static void loadCart(Surf* surf)
 {
+    printf("\nsurf.c loadCart Called");
     SurfItem* item = getMenuItem(surf);
 
     if(tic_tool_has_ext(item->name, PngExt))

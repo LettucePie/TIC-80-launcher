@@ -773,7 +773,8 @@ static void loadByHashDone(const u8* buffer, s32 size, void* data)
     printf("\nconsole.c loadByHashDone Called");
     LoadByHashData* loadByHashData = data;
     Console* console = loadByHashData->console;
-    printf("\nconsole.c loadByHashDone(data) = %s", loadByHashData->name);
+    printf("\nconsole.c loadByHashDone(data->name) = %s", loadByHashData->name);
+    printf("\nconsole.c loadByHashDone(data->section) = %s", loadByHashData->section);
 
     tic_cartridge* cart = newCart();
 
@@ -785,6 +786,8 @@ static void loadByHashDone(const u8* buffer, s32 size, void* data)
         printf("\nconsole.c loadByHashDone calling onCartLoaded");
         onCartLoaded(console, loadByHashData->name, loadByHashData->section);
     }
+
+    printf("\nconsole.c loadByHashDone NOTE: Place AutoSave function here!");
 
     if (loadByHashData->callback)
         loadByHashData->callback(loadByHashData->calldata);

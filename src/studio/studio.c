@@ -2299,6 +2299,7 @@ static void onStudioLoadConfirmed(Studio* studio, bool yes, void* data)
 
 void confirmLoadCart(Studio* studio, ConfirmCallback callback, void* data)
 {
+    printf("\nstudio.c confirmLoadCart Called");
     static const char* Warning[] =
     {
         "WARNING!",

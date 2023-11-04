@@ -791,6 +791,7 @@ static void fileByHashLoaded(const net_get_data* netData)
 
 void tic_fs_hashload(tic_fs* fs, const char* name, const char* hash, fs_load_callback callback, void* data)
 {
+    printf("\nfs.c tic_fs_hashload Called");
 #if defined(BAREMETALPI)
     // TODO BAREMETALPI
     return;
@@ -798,6 +799,7 @@ void tic_fs_hashload(tic_fs* fs, const char* name, const char* hash, fs_load_cal
 
     char cachePath[TICNAME_MAX];
     snprintf(cachePath, sizeof cachePath, TIC_CACHE "%s.tic", hash);
+    printf("\nfs.c tic_fs_hashload cachePath Variable = %s", cachePath);
 
     {
         s32 size = 0;
