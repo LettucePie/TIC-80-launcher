@@ -2093,6 +2093,7 @@ static void setIdle(void* data)
 
 static void freeAnim(Sprite* sprite)
 {
+    printf("\nsprite.c freeAnim Called");
     FREE(sprite->anim.bank.items);
     FREE(sprite->anim.page.items);
 }

@@ -1034,6 +1034,7 @@ set(TIC80STUDIO_SRC
     ${TIC80LIB_DIR}/studio/screens/menu.c
     ${TIC80LIB_DIR}/studio/screens/mainmenu.c
     ${TIC80LIB_DIR}/studio/screens/surf.c
+    ${TIC80LIB_DIR}/studio/screens/launcher.c
     ${TIC80LIB_DIR}/studio/screens/start.c
     ${TIC80LIB_DIR}/studio/editors/code.c
     ${TIC80LIB_DIR}/studio/editors/sprite.c

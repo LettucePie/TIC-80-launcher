@@ -32,6 +32,7 @@
 #include "editors/music.h"
 #include "screens/console.h"
 #include "screens/surf.h"
+#include "screens/launcher.h"
 #include "ext/history.h"
 #include "net.h"
 #include "wave_writer.h"
@@ -79,6 +80,7 @@ static const EditorMode Modes[] =
     TIC_MAP_MODE,
     TIC_SFX_MODE,
     TIC_MUSIC_MODE,
+    TIC_LAUNCHER_MODE,
 };
 
 static const EditorMode BankModes[] =
@@ -203,6 +205,7 @@ struct Studio
     Console*    console;
     World*      world;
     Surf*       surf;
+    Launcher*   launcher;
 
     tic_net* net;
 #endif
@@ -1216,6 +1219,19 @@ void gotoSurf(Studio* studio)
     setStudioMode(studio, TIC_SURF_MODE);
 }
 
+void initLauncherMode(Studio* studio)
+{
+    printf("\nstudio.c initLauncherMode Called");
+    initLauncher(studio->launcher, studio, studio->console);
+}
+
+void gotoLauncher(Studio* studio)
+{
+    printf("\nstudio.c gotoLauncher Called");
+    initLauncherMode(studio);
+    setStudioMode(studio, TIC_LAUNCHER_MODE);
+}
+
 void gotoCode(Studio* studio)
 {
     printf("\nstudio.c gotoCode Called");
@@ -1226,6 +1242,8 @@ void gotoCode(Studio* studio)
 
 void setStudioMode(Studio* studio, EditorMode mode)
 {
+    printf("\nstudio.c setStudioMode Called");
+    printf("\nstudio.c setStudioMode(mode) = %i", mode);
     if(mode != studio->mode)
     {
         EditorMode prev = studio->mode;
@@ -1255,6 +1273,7 @@ void setStudioMode(Studio* studio, EditorMode mode)
             break;
         case TIC_WORLD_MODE: initWorldMap(studio); break;
         case TIC_SURF_MODE: studio->surf->resume(studio->surf); break;
+        case TIC_LAUNCHER_MODE: studio->launcher->resume(studio->launcher); break;
         default: break;
         }
 
@@ -2047,6 +2066,7 @@ static void renderStudio(Studio* studio)
 
     case TIC_WORLD_MODE:    studio->world->tick(studio->world); break;
     case TIC_SURF_MODE:     studio->surf->tick(studio->surf); break;
+    case TIC_LAUNCHER_MODE: studio->launcher->tick(studio->launcher); break;
 #endif
     default: break;
     }
@@ -2242,6 +2262,7 @@ void studio_tick(Studio* studio, tic80_input input)
             [TIC_MAP_MODE]      = {map->scanline,           NULL, NULL, map},
             [TIC_WORLD_MODE]    = {studio->world->scanline,    NULL, NULL, studio->world},
             [TIC_SURF_MODE]     = {studio->surf->scanline,     NULL, NULL, studio->surf},
+            [TIC_LAUNCHER_MODE] = {studio->launcher->scanline, NULL, NULL, studio->launcher},
 #endif
         };
 
@@ -2349,6 +2370,7 @@ void studio_delete(Studio* studio)
         freeConsole (studio->console);
         freeWorld   (studio->world);
         freeSurf    (studio->surf);
+        freeLauncher(studio->launcher);
 
         FREE(studio->anim.show.items);
         FREE(studio->anim.hide.items);
@@ -2522,6 +2544,7 @@ Studio* studio_create(s32 argc, char **argv, s32 samplerate, tic80_pixel_color_f
         studio->console    = calloc(1, sizeof(Console));
         studio->world      = calloc(1, sizeof(World));
         studio->surf       = calloc(1, sizeof(Surf));
+        studio->launcher   = calloc(1, sizeof(Launcher));
 
         studio->anim.show = (Movie)MOVIE_DEF(STUDIO_ANIM_TIME, setPopupWait,
         {

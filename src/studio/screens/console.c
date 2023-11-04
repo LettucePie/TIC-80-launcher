@@ -1662,6 +1662,12 @@ static void onSurfCommand(Console* console)
     gotoSurf(console->studio);
 }
 
+static void onLauncherCommand(Console* console)
+{
+    printf("\nconsole.c onLauncherCommand Called");
+    gotoLauncher(console->studio);
+}
+
 static void loadExternal(Console* console, const char* path)
 {
     CommandDesc desc =
@@ -2958,6 +2964,14 @@ static const char HelpUsage[] = "help [<text>"
         "show game menu where you can setup video, sound and input options.",           \
         NULL,                                                                           \
         onGameMenuCommand,                                                              \
+        NULL,                                                                           \
+        NULL)                                                                           \
+                                                                                        \
+    macro("launcher",                                                                   \
+        NULL,                                                                           \
+        "open launcher interface for simple navigation and sorting.",                   \
+        NULL,                                                                           \
+        onLauncherCommand,                                                                  \
         NULL,                                                                           \
         NULL)                                                                           \
     ADDGET_FILE(macro)

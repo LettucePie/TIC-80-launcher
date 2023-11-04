@@ -1378,6 +1378,7 @@ static void setIdle(void* data)
 
 static void freeAnim(Map* map)
 {
+    printf("\nmap.c freeAnim Called");
     FREE(map->anim.show.items);
     FREE(map->anim.hide.items);
     FREE(map->anim.bank.items);

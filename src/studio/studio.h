@@ -109,6 +109,7 @@ typedef enum
     TIC_MUSIC_MODE,
     TIC_MENU_MODE,
     TIC_SURF_MODE,
+    TIC_LAUNCHER_MODE,
 
     TIC_MODES_COUNT
 } EditorMode;

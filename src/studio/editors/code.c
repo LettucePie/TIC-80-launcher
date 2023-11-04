@@ -3713,6 +3713,7 @@ static void setEditMode(void* data)
 
 static void freeAnim(Code* code)
 {
+    printf("\ncode.c freeAnim Called");
     FREE(code->anim.show.items);
     FREE(code->anim.hide.items);
 }
