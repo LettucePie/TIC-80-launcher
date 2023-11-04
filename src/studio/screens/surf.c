@@ -114,6 +114,7 @@ static void drawTopToolbar(Surf* surf, s32 x, s32 y)
 
 static SurfItem* getMenuItem(Surf* surf)
 {
+    printf("\nsurf.c getMenuItem Called");
     return &surf->menu.items[surf->menu.pos];
 }
 
@@ -549,7 +550,6 @@ static void onCartLoaded(void* data)
 {
     printf("\nsurf.c onCartLoaded Called");
     Surf* surf = data;
-    printf(data);
     runGame(surf->studio);
 }
 
@@ -563,10 +563,12 @@ static void onLoadCommandConfirmed(Studio* studio, bool yes, void* data)
 
         if (item->hash)
         {
+            printf("\nsurf.c onLoadCommandConfirmed calling loadByHash");
             surf->console->loadByHash(surf->console, item->name, item->hash, NULL, onCartLoaded, surf);
         }
         else
         {
+            printf("\nsurf.c onLoadCommandConfirmed calling runGame");
             surf->console->load(surf->console, item->name);
             runGame(surf->studio);
         }

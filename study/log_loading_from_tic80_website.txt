@@ -1,0 +1,29 @@
+surf.c move Called
+surf.c onPlayCart Called
+studio.c studioCartChanged Called
+studio.c md5 Called
+surf.c onLoadCommandConfirmed Called
+console.c loadByHash Called
+console.c loadByHash(name) = farming_simulator.tic
+console.c loadByHashDone Called
+console.c loadByHashDone(data) = farming_simulator.tic
+console.c loadByHashDone calling loadCartSection
+console.c loadByHashDone calling onCartLoaded
+console.c onCartLoaded Called
+console.c onCartLoaded(name) = farming_simulator.tic
+console.c setCartName Called
+console.c onCartLoaded calling studioRomLoaded
+studio.c studioRomLoaded Called
+studio.c initModules Called
+studio.c initWorldMap Called
+studio.c updateTitle Called
+studio.c updateHash Called
+studio.c md5 Called
+studio.c updateMDate Called
+cart farming_simulator.tic loaded!
+use RUN command to run it
+
+surf.c onCartLoaded Called
+studio.c runGame called
+studio.c initRunMode Called
+

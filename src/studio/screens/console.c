@@ -677,6 +677,7 @@ static void* getDemoCart(Console* console, tic_script_config* script, s32* size)
 
 static void setCartName(Console* console, const char* name, const char* path)
 {
+    printf("\nconsole.c setCartName Called");
     if(console->rom.name != name)
         strcpy(console->rom.name, name);
 
@@ -712,11 +713,13 @@ static void onLoadDemoCommandConfirmed(Console* console, tic_script_config* scri
 static void onCartLoaded(Console* console, const char* name, const char* section)
 {
     printf("\nconsole.c onCartLoaded Called");
+    printf("\nconsole.c onCartLoaded(name) = %s", name);
     tic_api_reset(console->tic);
 
     if(!section)
         setCartName(console, name, tic_fs_path(console->fs, name));
 
+    printf("\nconsole.c onCartLoaded calling studioRomLoaded");
     studioRomLoaded(console->studio);
 
     printBack(console, "\ncart ");
@@ -909,7 +912,7 @@ static void onLoadCommandConfirmed(Console* console)
                 SCOPE(free(cart))
                 {
                     tic_cart_load(cart, data, size);
-                    printf("\nconsole.c onLoadCommandConfirmed calling loadCartSection(console, cart, section)");
+                    printf("\nconsole.c onLoadCommandConfirmed calling loadCartSection(console, cart, section) CLAUSE A");
                     loadCartSection(console, cart, section);
                     printf("\nconsole.c onLoadCommandConfirmed calling onCartLoaded(console, name, section)");
                     onCartLoaded(console, name, section);
@@ -926,7 +929,7 @@ static void onLoadCommandConfirmed(Console* console)
 
                     if(cart) SCOPE(free(cart))
                     {
-                        printf("\nconsole.c onLoadCommandConfirmed calling loadCartSection(console, cart, section)");
+                        printf("\nconsole.c onLoadCommandConfirmed calling loadCartSection(console, cart, section) CLAUSE B");
                         loadCartSection(console, cart, section);
                         printf("\nconsole.c onLoadCommandConfirmed calling onCartLoaded(console, param, section)");
                         onCartLoaded(console, param, section);
@@ -950,7 +953,7 @@ static void onLoadCommandConfirmed(Console* console)
                         SCOPE(free(cart))
                         {
                             tic_project_load(name, data, size, cart);
-                            printf("\nconsole.c onLoadCommandConfirmed calling loadCartSection(console, cart, section)");
+                            printf("\nconsole.c onLoadCommandConfirmed calling loadCartSection(console, cart, section) CLAUSE C");
                             loadCartSection(console, cart, section);
                             printf("\nconsole.c onLoadCommandConfirmed calling onCartLoaded(console, name, section)");
                             onCartLoaded(console, name, section);

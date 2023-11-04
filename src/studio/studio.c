@@ -495,6 +495,7 @@ void playSystemSfx(Studio* studio, s32 id)
 
 static void md5(const void* voidData, s32 length, u8 digest[MD5_HASHSIZE])
 {
+    printf("\nstudio.c md5 Called");
     enum {Size = 512};
 
     const u8* data = voidData;
@@ -1461,6 +1462,7 @@ static void resetBanks(Studio* studio)
 
 static void initModules(Studio* studio)
 {
+    printf("\nstudio.c initModules Called");
     tic_mem* tic = studio->tic;
 
     resetBanks(studio);
@@ -1480,17 +1482,20 @@ static void initModules(Studio* studio)
 
 static void updateHash(Studio* studio)
 {
+    printf("\nstudio.c updateHash Called");
     md5(&studio->tic->cart, sizeof(tic_cartridge), studio->cart.hash.data);
 }
 
 static void updateMDate(Studio* studio)
 {
+    printf("\nstudio.c updateMDate Called");
     studio->cart.mdate = fs_date(studio->console->rom.path);
 }
 #endif
 
 static void updateTitle(Studio* studio)
 {
+    printf("\nstudio.c updateTitle Called");
     char name[TICNAME_MAX] = TIC_TITLE;
 
 #if defined(BUILD_EDITORS)
@@ -1528,6 +1533,7 @@ tic_cartridge* loadPngCart(png_buffer buffer)
 
 void studioRomSaved(Studio* studio)
 {
+    printf("\nstudio.c studioRomSaved Called");
     updateTitle(studio);
     updateHash(studio);
     updateMDate(studio);
@@ -1535,6 +1541,7 @@ void studioRomSaved(Studio* studio)
 
 void studioRomLoaded(Studio* studio)
 {
+    printf("\nstudio.c studioRomLoaded Called");
     initModules(studio);
 
     updateTitle(studio);
@@ -1544,6 +1551,7 @@ void studioRomLoaded(Studio* studio)
 
 bool studioCartChanged(Studio* studio)
 {
+    printf("\nstudio.c studioCartChanged Called");
     CartHash hash;
     md5(&studio->tic->cart, sizeof(tic_cartridge), hash.data);
 
