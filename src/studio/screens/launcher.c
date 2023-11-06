@@ -127,11 +127,19 @@ static void drawBottomToolbar(Launcher* launcher, s32 x, s32 y)
     tic_api_rect(tic, x, y, TIC80_WIDTH, Height, tic_color_grey);
     tic_api_rect(tic, x, y + Height, TIC80_WIDTH, 1, tic_color_black);
     {
-        char label[TICNAME_MAX + 1];
-        char dir[TICNAME_MAX];
-        tic_fs_dir(launcher->fs, dir);
+        char label[] = "MAIN MENU       ";
+        //char dir[TICNAME_MAX];
+        //tic_fs_dir(launcher->fs, dir);
 
-        sprintf(label, "/%s", dir);
+        //sprintf(label, "/%s", dir);
+        if (launcher->screen == SCREEN_SETTINGS)
+        {
+            strcpy(label, "SETTINGS");
+        }
+        if (launcher->screen == SCREEN_LOCAL_SELECT)
+        {
+            strcpy(label, "SORTING SELECT");
+        }
         s32 xl = x + MAIN_OFFSET;
         s32 yl = y + (Height - TIC_FONT_HEIGHT)/2;
         tic_api_print(tic, label, xl, yl+1, tic_color_black, true, 1, false);
@@ -160,11 +168,14 @@ static void drawBottomToolbar(Launcher* launcher, s32 x, s32 y)
 
 static void drawMenu(Launcher* launcher, s32 x, s32 y)
 {
+    // This is drawn every frame.
+    //printf("\nlauncher.c drawMenu Called");
     tic_mem* tic = launcher->tic;
 
     enum {Height = MENU_HEIGHT};
 
-    tic_api_rect(tic, 0, y + (MENU_HEIGHT - launcher->anim.val.menuHeight) / 2, TIC80_WIDTH, launcher->anim.val.menuHeight, tic_color_red);
+    //tic_api_rect(tic, 0, y + (MENU_HEIGHT - launcher->anim.val.menuHeight) / 2, TIC80_WIDTH, launcher->anim.val.menuHeight, tic_color_red);
+    tic_api_rect(tic, 5, 5, 5, 5, tic_color_red);
 
     s32 ym = y - launcher->menu.pos * MENU_HEIGHT + (MENU_HEIGHT - TIC_FONT_HEIGHT) / 2 - launcher->anim.val.pos;
     for(s32 i = 0; i < launcher->menu.count; i++, ym += Height)
@@ -186,6 +197,7 @@ static inline void cutExt(char* name, const char* ext)
 
 static bool addMenuItem(const char* name, const char* title, const char* hash, s32 id, void* ptr, bool dir)
 {
+    printf("\nlauncher.c addMenuItem Called");
     AddMenuItemData* data = (AddMenuItemData*)ptr;
 
     static const char CartExt[] = CART_EXT;
@@ -244,6 +256,7 @@ static s32 itemcmp(const void* a, const void* b)
 
 static void addMenuItemsDone(void* data)
 {
+    printf("\nlauncher.c addMenuItemsDone Called");
     AddMenuItemData* addMenuItemData = data;
     Launcher* launcher = addMenuItemData->launcher;
 
@@ -845,6 +858,7 @@ void initLauncher(Launcher* launcher, Studio* studio, struct Console* console)
         .studio = studio,
         .tic = getMemory(studio),
         .console = console,
+        .screen = SCREEN_MAIN,
         .fs = console->fs,
         .net = console->net,
         .tick = tick,

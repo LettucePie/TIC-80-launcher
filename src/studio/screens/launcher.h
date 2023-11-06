@@ -24,6 +24,17 @@
 
 #include "studio/studio.h"
 
+enum Screens
+{
+    SCREEN_MAIN,
+    SCREEN_SETTINGS,
+    SCREEN_LOCAL_SELECT,
+    SCREEN_LOCAL_ALL,
+    SCREEN_LOCAL_RECENT,
+    SCREEN_LOCAL_FAVORITES,
+    SCREEN_BROWSE_WEB
+};
+
 typedef struct Launcher Launcher;
 
 struct Launcher
@@ -33,6 +44,7 @@ struct Launcher
     struct tic_fs* fs;
     struct tic_net* net;
     struct Console* console;
+    enum Screens screen;
 
     bool init;
     bool loading;
