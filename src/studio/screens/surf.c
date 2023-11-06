@@ -352,6 +352,7 @@ static void coverLoaded(const net_get_data* netData)
 
 static void requestCover(Surf* surf, SurfItem* item)
 {
+    printf("\nsurf.c requestCover Called");
     CoverLoadingData coverLoadingData = {surf, surf->menu.pos};
     tic_fs_dir(surf->fs, coverLoadingData.dir);
 
@@ -377,6 +378,7 @@ static void requestCover(Surf* surf, SurfItem* item)
 
 static void loadCover(Surf* surf)
 {
+    //printf("\nsurf.c loadCover Called");
     tic_mem* tic = surf->tic;
     
     SurfItem* item = getMenuItem(surf);
@@ -521,6 +523,7 @@ static void onGoToDir(void* data)
 
 static void goBackDir(Surf* surf)
 {
+    printf("\nsurf.c goBackDir Called");
     char dir[TICNAME_MAX];
     tic_fs_dir(surf->fs, dir);
 
@@ -714,6 +717,8 @@ static inline bool isIdle(Surf* surf)
 
 static void tick(Surf* surf)
 {
+    //printf("\nsurf.c tick Called");
+    //printf("\nsurf.c tick calling processAnim");
     processAnim(surf->anim.movie, surf);
 
     if(!surf->init)
@@ -918,6 +923,7 @@ void initSurf(Surf* surf, Studio* studio, struct Console* console)
 
 void freeSurf(Surf* surf)
 {
+    printf("\nsurf.c freeSurf Called");
     freeAnim(surf);
     resetMenu(surf);
     free(surf);

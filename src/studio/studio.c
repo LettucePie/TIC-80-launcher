@@ -1268,7 +1268,7 @@ void setStudioMode(Studio* studio, EditorMode mode)
         {
         case TIC_RUN_MODE: initRunMode(studio); break;
         case TIC_CONSOLE_MODE:
-            if (prev == TIC_SURF_MODE)
+            if (prev == TIC_SURF_MODE || prev == TIC_LAUNCHER_MODE)
                 studio->console->done(studio->console);
             break;
         case TIC_WORLD_MODE: initWorldMap(studio); break;
@@ -1605,6 +1605,8 @@ void runGame(Studio* studio)
 #if defined(BUILD_EDITORS)
         if(studio->mode == TIC_SURF_MODE)
             studio->prevMode = TIC_SURF_MODE;
+        if(studio->mode == TIC_LAUNCHER_MODE)
+            studio->prevMode = TIC_LAUNCHER_MODE;
 #endif
     }
 }
@@ -1841,6 +1843,7 @@ static void processShortcuts(Studio* studio)
                     return;
                 }
             default:
+                printf("\nstudio.c processShortcuts calling setStudioMode");
                 setStudioMode(studio, TIC_CONSOLE_MODE);
             }
         }
@@ -1994,6 +1997,10 @@ static void renderStudio(Studio* studio)
             sfx = &studio->config->cart->bank0.sfx;
             music = &studio->config->cart->bank0.music;
             break;
+        case TIC_LAUNCHER_MODE:
+            sfx = &studio->config->cart->bank0.sfx;
+            music = &studio->config->cart->bank0.music;
+            break;
         default:
 #if defined(BUILD_EDITORS)
             sfx = getSfxSrc(studio);
@@ -2077,6 +2084,7 @@ static void renderStudio(Studio* studio)
     {
     case TIC_RUN_MODE: break;
     case TIC_SURF_MODE:
+    case TIC_LAUNCHER_MODE:
     case TIC_MENU_MODE:
         tic->input.data = -1;
         break;
@@ -2346,10 +2354,17 @@ void exitGame(Studio* studio)
 {
     if(studio->prevMode == TIC_SURF_MODE)
     {
+        printf("\nstudio.c exitGame prevMode == SURF; calling setStudioMode");
         setStudioMode(studio, TIC_SURF_MODE);
+    }
+    else if (studio -> prevMode == TIC_LAUNCHER_MODE)
+    {
+        printf("\nstudio.c exitGame prevMode == LAUNCHER; calling setStudioMode");
+        setStudioMode(studio, TIC_LAUNCHER_MODE);
     }
     else
     {
+        printf("\nstudio.c exitGame calling setStudioMode");
         setStudioMode(studio, TIC_CONSOLE_MODE);
     }
 }
@@ -2583,6 +2598,7 @@ Studio* studio_create(s32 argc, char **argv, s32 samplerate, tic80_pixel_color_f
 #if defined(BUILD_EDITORS)
     initConsole(studio->console, studio, studio->fs, studio->net, studio->config, args);
     initSurfMode(studio);
+    initLauncherMode(studio);
     initModules(studio);
 #endif
 
@@ -2605,6 +2621,7 @@ Studio* studio_create(s32 argc, char **argv, s32 samplerate, tic80_pixel_color_f
         args.skip = true;
 
     if(args.skip)
+        printf("\nstudio.c studio_create args.skip == true, calling setStudioMode");
         setStudioMode(studio, TIC_CONSOLE_MODE);
 
     return studio;

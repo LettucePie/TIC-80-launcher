@@ -86,7 +86,7 @@ static void drawTopToolbar(Launcher* launcher, s32 x, s32 y)
     tic_api_rect(tic, x, y + Height, TIC80_WIDTH, 1, tic_color_black);
 
     {
-        static const char Label[] = "TIC-80 SURF";
+        static const char Label[] = "TIC-80 LAUNCHER";
         s32 xl = x + MAIN_OFFSET;
         s32 yl = y + (Height - TIC_FONT_HEIGHT)/2;
         tic_api_print(tic, Label, xl, yl+1, tic_color_black, true, 1, false);
@@ -521,6 +521,7 @@ static void onGoToDir(void* data)
 
 static void goBackDir(Launcher* launcher)
 {
+    printf("\nlauncher.c goBackDir Called");
     char dir[TICNAME_MAX];
     tic_fs_dir(launcher->fs, dir);
 
@@ -714,10 +715,13 @@ static inline bool isIdle(Launcher* launcher)
 
 static void tick(Launcher* launcher)
 {
+    //printf("\nlauncher.c tick Called");
+    //printf("\nlauncher.c tick calling processAnim");
     processAnim(launcher->anim.movie, launcher);
 
     if(!launcher->init)
     {
+        printf("\nlauncher.c tick launcher->init == false");
         initItemsAsync(launcher, NULL, NULL);
         launcher->anim.movie = resetMovie(&launcher->anim.show);
         launcher->init = true;
@@ -735,7 +739,7 @@ static void tick(Launcher* launcher)
             setStudioMode(launcher->studio, TIC_CONSOLE_MODE);
     }
 
-    if (getStudioMode(launcher->studio) != TIC_SURF_MODE) return;
+    if (getStudioMode(launcher->studio) != TIC_LAUNCHER_MODE) return;
 
     if (launcher->menu.count > 0)
     {
@@ -918,6 +922,7 @@ void initLauncher(Launcher* launcher, Studio* studio, struct Console* console)
 
 void freeLauncher(Launcher* launcher)
 {
+    printf("\nlauncher.c freeLauncher Called");
     freeAnim(launcher);
     resetMenu(launcher);
     free(launcher);
