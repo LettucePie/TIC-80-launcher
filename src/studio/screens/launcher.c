@@ -175,8 +175,26 @@ static void drawMenu(Launcher* launcher, s32 x, s32 y)
     enum {Height = MENU_HEIGHT};
 
     //tic_api_rect(tic, 0, y + (MENU_HEIGHT - launcher->anim.val.menuHeight) / 2, TIC80_WIDTH, launcher->anim.val.menuHeight, tic_color_red);
-    tic_api_rect(tic, 5, 5, 5, 5, tic_color_red);
+    //tic_api_rect(tic, 5, 5, 5, 5, tic_color_red);
+    if (launcher->screen == SCREEN_MAIN)
+    {
+        // Create 3 Icons.
+        // Start by setting useful dimension values
+        s32 div_x = TIC80_WIDTH / 3;
+        s32 icon_w = div_x - 14;
+        s32 div_y = TIC80_HEIGHT / 3;
+        s32 icon_y = div_y - 20;
+        // Icon One
+        tic_api_rect(tic, div_x - icon_w, div_y - (icon_y / 2), icon_w, icon_y, tic_color_white);
+        // Icon Two
+        tic_api_rect(tic, div_x * 2 - icon_w, div_y - (icon_y / 2), icon_w, icon_y, tic_color_white);
+        // Icon Three
+        tic_api_rect(tic, div_x * 3 - icon_w, div_y - (icon_y / 2), icon_w, icon_y, tic_color_white);
+        //printf("\nlauncher.c drawMenu div value = %i", div);
+        //tic_api_rect(tic, TIC80_WIDTH)
+    }
 
+    // What is s32 ym?
     s32 ym = y - launcher->menu.pos * MENU_HEIGHT + (MENU_HEIGHT - TIC_FONT_HEIGHT) / 2 - launcher->anim.val.pos;
     for(s32 i = 0; i < launcher->menu.count; i++, ym += Height)
     {
