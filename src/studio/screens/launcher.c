@@ -58,12 +58,14 @@ struct SurfItem
     char* name;
     char* hash;
     s32 id;
+    s32 screen_id;
     s32 column;
     tic_screen* cover;
 
     tic_palette* palette;
 
     bool coverLoading;
+    bool menuButton;
     bool dir;
     bool project;
 };
@@ -176,14 +178,16 @@ static void drawMenu(Launcher* launcher, s32 x, s32 y)
 {
     // This is drawn every frame.
     //printf("\nlauncher.c drawMenu Called");
+    //printf("\nlauncher.c drawMenu: assigning tic from launcher-tic");
     tic_mem* tic = launcher->tic;
-
+    //printf("\nlauncher.c drawMenu: declaring enum Height = MENU_HEIGHT");
     enum {Height = MENU_HEIGHT};
 
     //tic_api_rect(tic, 0, y + (MENU_HEIGHT - launcher->anim.val.menuHeight) / 2, TIC80_WIDTH, launcher->anim.val.menuHeight, tic_color_red);
     //tic_api_rect(tic, 5, 5, 5, 5, tic_color_red);
     if (launcher->screen == SCREEN_MAIN)
     {
+        //printf("\nlauncher.c drawMenu launcher->screen == SCREEN_MAIN");
         // Create 3 Icons.
         // Start by setting useful dimension values
         s32 div_x = TIC80_WIDTH / 3;
@@ -213,17 +217,19 @@ static void drawMenu(Launcher* launcher, s32 x, s32 y)
         tic_api_print(tic, label_3, div_x * 2 + (w_pad / 2), y_pos + icon_h + 4, tic_color_white, false, 1, false);
 
     }
-
-    // What is s32 ym?
-    s32 ym = y - launcher->menu.pos * MENU_HEIGHT + (MENU_HEIGHT - TIC_FONT_HEIGHT) / 2 - launcher->anim.val.pos;
-    for(s32 i = 0; i < launcher->menu.count; i++, ym += Height)
+    else
     {
-        const char* name = launcher->menu.items[i].label;
-
-        if (ym > (-(TIC_FONT_HEIGHT + 1)) && ym <= TIC80_HEIGHT) 
+        // What is s32 ym?
+        s32 ym = y - launcher->menu.pos * MENU_HEIGHT + (MENU_HEIGHT - TIC_FONT_HEIGHT) / 2 - launcher->anim.val.pos;
+        for(s32 i = 0; i < launcher->menu.count; i++, ym += Height)
         {
-            tic_api_print(tic, name, x + MAIN_OFFSET, ym + 1, tic_color_black, false, 1, false);
-            tic_api_print(tic, name, x + MAIN_OFFSET, ym, tic_color_white, false, 1, false);
+            const char* name = launcher->menu.items[i].label;
+
+            if (ym > (-(TIC_FONT_HEIGHT + 1)) && ym <= TIC80_HEIGHT)
+            {
+                tic_api_print(tic, name, x + MAIN_OFFSET, ym + 1, tic_color_black, false, 1, false);
+                tic_api_print(tic, name, x + MAIN_OFFSET, ym, tic_color_white, false, 1, false);
+            }
         }
     }
 }
@@ -236,6 +242,8 @@ static inline void cutExt(char* name, const char* ext)
 static bool addMenuItem(const char* name, const char* title, const char* hash, s32 id, void* ptr, bool dir)
 {
     printf("\nlauncher.c addMenuItem Called");
+    printf("\nlauncher.c addMenuItem (name) = %s", name);
+    printf("\nlauncher.c addMenuItem (title) = %s", title);
     AddMenuItemData* data = (AddMenuItemData*)ptr;
 
     static const char CartExt[] = CART_EXT;
@@ -279,6 +287,29 @@ static bool addMenuItem(const char* name, const char* title, const char* hash, s
     return true;
 }
 
+static bool addMenuButton(const char* name, s32 screen_id, s32 id, void* ptr)
+{
+    printf("\nlauncher.c addMenuButton Called");
+    printf("\nlauncher.c addMenuButton (name) = %s", name);
+    printf("\nlauncher.c addMenuButton (screen_id) = %i", screen_id);
+    //I don't know what a pointer is'
+    AddMenuItemData* data = (AddMenuItemData*)ptr;
+
+    data->items = realloc(data->items, sizeof(SurfItem) * ++data->count);
+    SurfItem* item = &data->items[data->count-1];
+
+    *item = (SurfItem)
+    {
+        .name = strdup(name),
+        .hash = NULL,
+        .id = id,
+        .screen_id = screen_id,
+        .menuButton = true,
+    };
+
+    return true;
+}
+
 static s32 itemcmp(const void* a, const void* b)
 {
     const SurfItem* item1 = a;
@@ -298,17 +329,21 @@ static void addMenuItemsDone(void* data)
     AddMenuItemData* addMenuItemData = data;
     Launcher* launcher = addMenuItemData->launcher;
 
+    printf("\nlauncher.c addMenuItemsDone: assigning menu.items from addMenuItemData->items");
     launcher->menu.items = addMenuItemData->items;
+    printf("\nlauncher.c addMenuItemsDone: assigning menu.count from addMenuItemData->count");
     launcher->menu.count = addMenuItemData->count;
+    printf("\nlauncher.c addMenuItemsDone: menu.count = %i", launcher->menu.count);
 
     if(!tic_fs_ispubdir(launcher->fs))
+        printf("\nlauncher.c addMenuItemsDone calling qsort");
         qsort(launcher->menu.items, launcher->menu.count, sizeof *launcher->menu.items, itemcmp);
 
     if (addMenuItemData->done)
         addMenuItemData->done(addMenuItemData->data);
-
+    printf("\nlauncher.c addMenuItemsDone calling free(addMenuItemData");
     free(addMenuItemData);
-
+    printf("\nlauncher.c addMenuItemsDone: setting launcher->loading = false");
     launcher->loading = false;
 }
 
@@ -489,21 +524,36 @@ static void loadCover(Launcher* launcher)
 static void initItemsAsync(Launcher* launcher, fs_done_callback callback, void* calldata)
 {
     printf("\nlauncher.c initItemsAsync Called");
+    printf("\nlauncher.c initItemsAsync calling resetMenu");
     resetMenu(launcher);
 
     launcher->loading = true;
 
     char dir[TICNAME_MAX];
+    printf("\nlauncher.c initItemsAsync calling tis_fs_dir");
     tic_fs_dir(launcher->fs, dir);
-
+    printf("\nlauncher.c initItemsAsync constructing data of type AddMenuItemData");
     AddMenuItemData data = { NULL, 0, launcher, callback, calldata};
     printf("\nlauncher.c initItemsAsync: NOTE: I think this is where i add in my Menu Buttons?");
     // I can add in menu buttons into this system maybe
     // then sort out drawing them in columns later in the drawMenu function... maybe lol
-    if(strcmp(dir, "") != 0)
-        addMenuItem("..", NULL, NULL, 0, &data, true);
-
-    tic_fs_enum(launcher->fs, addMenuItem, addMenuItemsDone, MOVE(data));
+    if(launcher->screen == SCREEN_MAIN)
+    {
+        addMenuButton("LIBRARY", SCREEN_MAIN, 0, &data);
+        addMenuButton("WEB", SCREEN_MAIN, 1, &data);
+        addMenuButton("SETTINGS", SCREEN_MAIN, 2, &data);
+        addMenuItemsDone(MOVE(data));
+    }
+    else
+    {
+            if(strcmp(dir, "") != 0)
+            {
+                printf("\nlauncher.c initItemsAsync calling addMenuItem (..)");
+                addMenuItem("..", NULL, NULL, 0, &data, true);
+            }
+        printf("\nlauncher.c initItemsAsync calling tic_fs_enum");
+        tic_fs_enum(launcher->fs, addMenuItem, addMenuItemsDone, MOVE(data));
+    }
 }
 
 typedef struct
@@ -560,12 +610,14 @@ static void onGoBackDir(void* data)
 
 static void onGoToDirDone(void* data)
 {
+    printf("\nlauncher.c onGoToDirDone Called");
     Launcher* launcher = data;
     launcher->anim.movie = resetMovie(&launcher->anim.gotodir.show);
 }
 
 static void onGoToDir(void* data)
 {
+    printf("\nlauncher.c onGoToDir Called");
     Launcher* launcher = data;
     SurfItem* item = getMenuItem(launcher);
 
@@ -590,6 +642,7 @@ static void goBackDir(Launcher* launcher)
 static void changeDirectory(Launcher* launcher, const char* name)
 {
     printf("\nlauncher.c changeDirectory Called");
+    printf("\nlauncher.c changeDirectory(name) = %s", name);
     if (strcmp(name, "..") == 0)
     {
         goBackDir(launcher);
@@ -733,10 +786,22 @@ static void processGamepad(Launcher* launcher)
         if(tic_api_btnp(tic, A, -1, -1)
             || ticEnterWasPressed(tic, -1, -1))
         {
+            printf("\nlauncher.c processGamepad: A or Enter Pressed");
             SurfItem* item = getMenuItem(launcher);
-            item->dir 
-                ? changeDirectory(launcher, item->name)
-                : loadCart(launcher);
+            printf("\nlauncher.c processGamepad: SurfItem bool dir = %i", item->dir);
+            printf("\nlauncher.c processGamepad: SurfItem bool menuButton = %i", item->menuButton);
+            if(item->dir)
+            {
+                changeDirectory(launcher, item->name);
+            }
+            else if(item->menuButton)
+            {
+                printf("\nlauncher.c processGamepad: Time to make a function that changes menu screens!");
+            }
+            else
+            {
+                loadCart(launcher);
+            }
         }
 
         if(tic_api_btnp(tic, B, -1, -1)
@@ -790,6 +855,7 @@ static void tick(Launcher* launcher)
 
     if (isIdle(launcher) && launcher->menu.count > 0)
     {
+        //printf("\nlauncher.tick: isIdle(launcher) == true AND launcher->menu.count > 0");
         processGamepad(launcher);
         if(tic_api_keyp(tic, tic_key_escape, -1, -1))
             setStudioMode(launcher->studio, TIC_CONSOLE_MODE);
@@ -799,12 +865,21 @@ static void tick(Launcher* launcher)
 
     if (launcher->menu.count > 0)
     {
-        loadCover(launcher);
-
-        tic_screen* cover = getMenuItem(launcher)->cover;
-
-        if(cover)
-            memcpy(tic->ram->vram.screen.data, cover->data, sizeof(tic_screen));
+        //printf("\nlauncher.c tick: launcher->menu.count > 0");
+        if(launcher->screen == SCREEN_MAIN)
+        {
+            printf("\nlauncher.c tick: launcher->screen == SCREEN_MAIN");
+        }
+        else
+        {
+            //printf("\nlauncher.c tick: calling loadCover");
+            loadCover(launcher);
+            //printf("\nlauncher.c tick: assigning cover from return of getMenuItem");
+            tic_screen* cover = getMenuItem(launcher)->cover;
+            if(cover)
+                //printf("\nlauncher.c tick: cover == true");
+                memcpy(tic->ram->vram.screen.data, cover->data, sizeof(tic_screen));
+        }
     }
 
     VBANK(tic, 1)
@@ -814,10 +889,13 @@ static void tick(Launcher* launcher)
 
         if(launcher->menu.count > 0)
         {
+            //printf("\nlauncher.c tick: launcher->menu.count > 0 CLAUSE VBANK(tic, 1)");
+            //printf("\nlauncher.c tick: calling drawMenu");
             drawMenu(launcher, launcher->anim.val.menuX, (TIC80_HEIGHT - MENU_HEIGHT)/2);
         }
         else if(!launcher->loading)
         {
+            //printf("\nlauncher.c tick: launcher->loading == false");
             static const char Label[] = "You don't have any files...";
             s32 size = tic_api_print(tic, Label, 0, -TIC_FONT_HEIGHT, tic_color_white, true, 1, false);
             tic_api_print(tic, Label, (TIC80_WIDTH - size) / 2, (TIC80_HEIGHT - TIC_FONT_HEIGHT)/2, tic_color_white, true, 1, false);
