@@ -4070,10 +4070,17 @@ static void backspaceWord(Console* console)
 
 static void processKeyboard(Console* console)
 {
+    //printf("\nconsole.c processKeyboard Called");
     tic_mem* tic = console->tic;
 
     if(!console->active)
         return;
+
+    if(tic_api_btnp(tic, 6, -1, -1) || tic_api_btnp(tic, 7, -1, -1))
+    {
+        //printf("\nconsole.c processKeyboard: GamePad Button X or Y Pressed");
+        gotoSurf(console->studio);
+    }
 
     if(tic->ram->input.keyboard.data != 0)
     {
