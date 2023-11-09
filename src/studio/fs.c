@@ -420,8 +420,11 @@ static void enumFiles(tic_fs* fs, const char* path, fs_list_callback callback, v
 
 void tic_fs_enum(tic_fs* fs, fs_list_callback onItem, fs_done_callback onDone, void* data)
 {
+    printf("\nfs.c tic_fs_enum Called");
     if (isRoot(fs) && !onItem(PublicDir, NULL, NULL, 0, data, true))
     {
+        printf("\nfs.c tic_fs_enum: isRoot(fs) == true AND onItem(PublicDir, ...) == false");
+        printf("\nfs.c tic_fs_enum calling onDone");
         onDone(data);
         return;
     }
@@ -440,9 +443,9 @@ void tic_fs_enum(tic_fs* fs, fs_list_callback onItem, fs_done_callback onDone, v
 #endif
 
     const char* path = tic_fs_path(fs, "");
-
+    printf("\nfs.c tic_fs_enum calling enumFiles");
     enumFiles(fs, path, onItem, data);
-
+    printf("\n.fs.c tic_fs_enum calling onDone");
     onDone(data);
 }
 
