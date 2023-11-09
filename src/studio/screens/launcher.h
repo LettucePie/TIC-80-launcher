@@ -56,6 +56,7 @@ struct Launcher
         s32 target;
         struct SurfItem* items;
         s32 count;
+        s32 column;
     } menu;
 
     struct

@@ -374,6 +374,7 @@ static void resetMenu(Launcher* launcher)
     }
 
     launcher->menu.pos = 0;
+    launcher->menu.column = 0;
 }
 
 static void updateMenuItemCover(Launcher* launcher, s32 pos, const u8* cover, s32 size)
@@ -728,8 +729,21 @@ static void loadCart(Launcher* launcher)
 static void move(Launcher* launcher, s32 dir)
 {
     printf("\nlauncher.c move Called");
+    if(launcher->menu.target == launcher->menu.count && dir > 0)
+    {
+        printf("\nlauncher.c move: Move has reached end");
+    }
+    if(launcher->menu.pos == 0 && dir < 0)
+    {
+        printf("\nlauncher.c move: Selector on Left Side, Move Gallery to the Right");
+    }
+    if(launcher->menu.pos == 2 && dir > 1)
+    {
+        printf("\nlauncher.c move: Selector on Right Side, Move Gallery to the Left");
+    }
+    printf("\nlauncher.c move launcher->menu.pos = %i", launcher->menu.pos);
     printf("\nlauncher.c move launcher->menu.target = %i before.", launcher->menu.target);
-    launcher->menu.target = (launcher->menu.pos + launcher->menu.count + dir) % launcher->menu.count;
+    launcher->menu.target = (launcher->menu.count + dir) % launcher->menu.count;
     printf("\nlauncher.c move launcher->menu.target = %i after.", launcher->menu.target);
 
     // Okay... so anim.move is a Movie that is contained in the anim struct of the Launcher
@@ -778,9 +792,9 @@ static void processGamepad(Launcher* launcher)
             || tic_api_keyp(tic, tic_key_pageup, Hold, Period))
         {
             s32 dir = -PAGE;
-
-            if(launcher->menu.pos == 0) dir = -1;
-            else if(launcher->menu.pos <= PAGE) dir = -launcher->menu.pos;
+            printf("\nlauncher.c processGamepad: Wraparound functionality Left Side");
+            if(launcher->menu.target == 0) dir = -1;
+            else if(launcher->menu.target <= PAGE) dir = -launcher->menu.target;
 
             move(launcher, dir);
         }
@@ -789,9 +803,9 @@ static void processGamepad(Launcher* launcher)
             || tic_api_keyp(tic, tic_key_pagedown, Hold, Period))
         {
             s32 dir = +PAGE, last = launcher->menu.count - 1;
-
-            if(launcher->menu.pos == last) dir = +1;
-            else if(launcher->menu.pos + PAGE >= last) dir = last - launcher->menu.pos;
+            printf("\nlauncher.c processGamepad: Wraparound functionality Right Side");
+            if(launcher->menu.target == last) dir = +1;
+            else if(launcher->menu.target + PAGE >= last) dir = last - launcher->menu.target;
 
             move(launcher, dir);
         }
