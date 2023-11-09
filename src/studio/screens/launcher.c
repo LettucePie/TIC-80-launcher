@@ -186,14 +186,18 @@ static void drawMenu(Launcher* launcher, s32 x, s32 y)
         s32 div_y = TIC80_HEIGHT / 2;
         s32 h_pad = 20;
         s32 icon_h = div_y - h_pad;
+        s32 y_pos = div_y - (icon_h / 2);
         // Icon One
-        tic_api_rect(tic, w_pad / 2, div_y - (icon_h / 2), icon_w, icon_h, tic_color_white);
+        tic_api_rect(tic, w_pad / 2, y_pos, icon_w, icon_h, tic_color_white);
         // Icon Two
-        tic_api_rect(tic, div_x + (w_pad / 2), div_y - (icon_h / 2), icon_w, icon_h, tic_color_white);
+        tic_api_rect(tic, div_x + (w_pad / 2), y_pos, icon_w, icon_h, tic_color_white);
         // Icon Three
-        tic_api_rect(tic, div_x * 2 + (w_pad / 2), div_y - (icon_h / 2), icon_w, icon_h, tic_color_white);
-        //printf("\nlauncher.c drawMenu div value = %i", div);
-        //tic_api_rect(tic, TIC80_WIDTH)
+        tic_api_rect(tic, div_x * 2 + (w_pad / 2), y_pos, icon_w, icon_h, tic_color_white);
+        // Label One
+        const char* label_1 = "LIBRARY";
+        tic_api_print(tic, label_1, w_pad / 2, y_pos + icon_h + 5, tic_color_black, false, 1, false);
+        tic_api_print(tic, label_1, w_pad / 2, y_pos + icon_h + 4, tic_color_white, false, 1, false);
+
     }
 
     // What is s32 ym?
@@ -204,8 +208,8 @@ static void drawMenu(Launcher* launcher, s32 x, s32 y)
 
         if (ym > (-(TIC_FONT_HEIGHT + 1)) && ym <= TIC80_HEIGHT) 
         {
-            tic_api_print(tic, name, x + MAIN_OFFSET, ym + 1, tic_color_black, false, 1, false);
-            tic_api_print(tic, name, x + MAIN_OFFSET, ym, tic_color_white, false, 1, false);
+            //tic_api_print(tic, name, x + MAIN_OFFSET, ym + 1, tic_color_black, false, 1, false);
+            //tic_api_print(tic, name, x + MAIN_OFFSET, ym, tic_color_white, false, 1, false);
         }
     }
 }
