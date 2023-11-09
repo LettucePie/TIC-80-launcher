@@ -58,6 +58,7 @@ struct SurfItem
     char* name;
     char* hash;
     s32 id;
+    s32 column;
     tic_screen* cover;
 
     tic_palette* palette;
@@ -166,6 +167,11 @@ static void drawBottomToolbar(Launcher* launcher, s32 x, s32 y)
 
 }
 
+static void drawColumns(Launcher* launcher)
+{
+
+}
+
 static void drawMenu(Launcher* launcher, s32 x, s32 y)
 {
     // This is drawn every frame.
@@ -216,8 +222,8 @@ static void drawMenu(Launcher* launcher, s32 x, s32 y)
 
         if (ym > (-(TIC_FONT_HEIGHT + 1)) && ym <= TIC80_HEIGHT) 
         {
-            //tic_api_print(tic, name, x + MAIN_OFFSET, ym + 1, tic_color_black, false, 1, false);
-            //tic_api_print(tic, name, x + MAIN_OFFSET, ym, tic_color_white, false, 1, false);
+            tic_api_print(tic, name, x + MAIN_OFFSET, ym + 1, tic_color_black, false, 1, false);
+            tic_api_print(tic, name, x + MAIN_OFFSET, ym, tic_color_white, false, 1, false);
         }
     }
 }
@@ -482,6 +488,7 @@ static void loadCover(Launcher* launcher)
 
 static void initItemsAsync(Launcher* launcher, fs_done_callback callback, void* calldata)
 {
+    printf("\nlauncher.c initItemsAsync Called");
     resetMenu(launcher);
 
     launcher->loading = true;
@@ -490,7 +497,9 @@ static void initItemsAsync(Launcher* launcher, fs_done_callback callback, void* 
     tic_fs_dir(launcher->fs, dir);
 
     AddMenuItemData data = { NULL, 0, launcher, callback, calldata};
-
+    printf("\nlauncher.c initItemsAsync: NOTE: I think this is where i add in my Menu Buttons?");
+    // I can add in menu buttons into this system maybe
+    // then sort out drawing them in columns later in the drawMenu function... maybe lol
     if(strcmp(dir, "") != 0)
         addMenuItem("..", NULL, NULL, 0, &data, true);
 
@@ -662,7 +671,9 @@ static void loadCart(Launcher* launcher)
 static void move(Launcher* launcher, s32 dir)
 {
     printf("\nstudio.c move Called");
+    printf("\nstudio.c move launcher->menu.target = %i before.", launcher->menu.target);
     launcher->menu.target = (launcher->menu.pos + launcher->menu.count + dir) % launcher->menu.count;
+    printf("\nstudio.c move launcher->menu.target = %i after.", launcher->menu.target);
 
     Anim* anim = launcher->anim.move.items;
     anim->end = (launcher->menu.target - launcher->menu.pos) * MENU_HEIGHT;
