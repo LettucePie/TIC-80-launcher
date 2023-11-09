@@ -185,8 +185,10 @@ static void drawMenu(Launcher* launcher, s32 x, s32 y)
 
     //tic_api_rect(tic, 0, y + (MENU_HEIGHT - launcher->anim.val.menuHeight) / 2, TIC80_WIDTH, launcher->anim.val.menuHeight, tic_color_red);
     //tic_api_rect(tic, 5, 5, 5, 5, tic_color_red);
-    tic_api_rect(tic, launcher->anim.val.pos + 20, 10, 20, 20, tic_color_red);
-    tic_api_rect(tic, launcher->menu.pos + 20, 30, 20, 20, tic_color_blue);
+    s32 xm = y - launcher->menu.pos * MENU_HEIGHT + (MENU_HEIGHT - TIC_FONT_HEIGHT) / 2 - launcher->anim.val.pos;
+    //tic_api_rect(tic, launcher->anim.val.pos + 20, 10, 20, 20, tic_color_red);
+    //tic_api_rect(tic, launcher->menu.pos + 20, 30, 20, 20, tic_color_blue);
+    tic_api_rect(tic, xm, 10, 20, 20, tic_color_red);
     if (launcher->screen == SCREEN_MAIN)
     {
         //printf("\nlauncher.c drawMenu launcher->screen == SCREEN_MAIN");
