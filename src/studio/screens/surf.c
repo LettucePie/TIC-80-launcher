@@ -165,7 +165,7 @@ static void drawMenu(Surf* surf, s32 x, s32 y)
     enum {Height = MENU_HEIGHT};
 
     tic_api_rect(tic, 0, y + (MENU_HEIGHT - surf->anim.val.menuHeight) / 2, TIC80_WIDTH, surf->anim.val.menuHeight, tic_color_red);
-
+    //printf("\nsurf.c drawMenu: surf->menu.count = %i", surf->menu.count);
     s32 ym = y - surf->menu.pos * MENU_HEIGHT + (MENU_HEIGHT - TIC_FONT_HEIGHT) / 2 - surf->anim.val.pos;
     for(s32 i = 0; i < surf->menu.count; i++, ym += Height)
     {
@@ -619,7 +619,10 @@ static void loadCart(Surf* surf)
 static void move(Surf* surf, s32 dir)
 {
     printf("\nsurf.c move Called");
+
+    printf("\nsurf.c move launcher->menu.target = %i before.", surf->menu.target);
     surf->menu.target = (surf->menu.pos + surf->menu.count + dir) % surf->menu.count;
+    printf("\nsurf.c move launcher->menu.target = %i after.", surf->menu.target);
 
     Anim* anim = surf->anim.move.items;
     anim->end = (surf->menu.target - surf->menu.pos) * MENU_HEIGHT;

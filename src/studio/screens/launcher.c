@@ -723,14 +723,14 @@ static void loadCart(Launcher* launcher)
 
 static void move(Launcher* launcher, s32 dir)
 {
-    printf("\nstudio.c move Called");
-    printf("\nstudio.c move launcher->menu.target = %i before.", launcher->menu.target);
+    printf("\nlauncher.c move Called");
+    printf("\nlauncher.c move launcher->menu.target = %i before.", launcher->menu.target);
     launcher->menu.target = (launcher->menu.pos + launcher->menu.count + dir) % launcher->menu.count;
-    printf("\nstudio.c move launcher->menu.target = %i after.", launcher->menu.target);
+    printf("\nlauncher.c move launcher->menu.target = %i after.", launcher->menu.target);
 
     Anim* anim = launcher->anim.move.items;
     anim->end = (launcher->menu.target - launcher->menu.pos) * MENU_HEIGHT;
-
+    printf("\nlauncher.c move calling resetMovie");
     launcher->anim.movie = resetMovie(&launcher->anim.move);
 }
 
@@ -868,7 +868,7 @@ static void tick(Launcher* launcher)
         //printf("\nlauncher.c tick: launcher->menu.count > 0");
         if(launcher->screen == SCREEN_MAIN)
         {
-            printf("\nlauncher.c tick: launcher->screen == SCREEN_MAIN");
+            //printf("\nlauncher.c tick: launcher->screen == SCREEN_MAIN");
         }
         else
         {

@@ -942,6 +942,7 @@ static inline float animEffect(AnimEffect effect, float x)
 
 static void animTick(Movie* movie)
 {
+    //printf("\nstudio.c animTick Called");
     for(Anim* it = movie->items, *end = it + movie->count; it != end; ++it)
     {
 	float tick = (float)(movie->tick < it->time ? movie->tick : it->time);
@@ -951,9 +952,11 @@ static void animTick(Movie* movie)
 
 void processAnim(Movie* movie, void* data)
 {
+    //printf("\nstudio.c processAnim Called");
     animTick(movie);
 
     if(movie->tick == movie->time)
+        //printf("\nstudio.c processAnim: movie->tick == movie->time");
         movie->done(data);
 
     movie->tick++;
@@ -961,6 +964,7 @@ void processAnim(Movie* movie, void* data)
 
 Movie* resetMovie(Movie* movie)
 {
+    //printf("\nstudio.c resetMovie Called");
     movie->tick = 0;
     animTick(movie);
 

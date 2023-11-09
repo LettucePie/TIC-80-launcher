@@ -445,7 +445,7 @@ void tic_fs_enum(tic_fs* fs, fs_list_callback onItem, fs_done_callback onDone, v
     const char* path = tic_fs_path(fs, "");
     printf("\nfs.c tic_fs_enum calling enumFiles");
     enumFiles(fs, path, onItem, data);
-    printf("\n.fs.c tic_fs_enum calling onDone");
+    printf("\nfs.c tic_fs_enum calling onDone");
     onDone(data);
 }
 
