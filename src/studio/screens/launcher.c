@@ -197,6 +197,14 @@ static void drawMenu(Launcher* launcher, s32 x, s32 y)
         const char* label_1 = "LIBRARY";
         tic_api_print(tic, label_1, w_pad / 2, y_pos + icon_h + 5, tic_color_black, false, 1, false);
         tic_api_print(tic, label_1, w_pad / 2, y_pos + icon_h + 4, tic_color_white, false, 1, false);
+        // Label Two
+        const char* label_2 = "WEB";
+        tic_api_print(tic, label_2, div_x + (w_pad / 2), y_pos + icon_h + 5, tic_color_black, false, 1, false);
+        tic_api_print(tic, label_2, div_x + (w_pad / 2), y_pos + icon_h + 4, tic_color_white, false, 1, false);
+        // Label Three
+        const char* label_3 = "SETTINGS";
+        tic_api_print(tic, label_3, div_x * 2 + (w_pad / 2), y_pos + icon_h + 5, tic_color_black, false, 1, false);
+        tic_api_print(tic, label_3, div_x * 2 + (w_pad / 2), y_pos + icon_h + 4, tic_color_white, false, 1, false);
 
     }
 
