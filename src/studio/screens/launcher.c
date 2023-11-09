@@ -185,6 +185,8 @@ static void drawMenu(Launcher* launcher, s32 x, s32 y)
 
     //tic_api_rect(tic, 0, y + (MENU_HEIGHT - launcher->anim.val.menuHeight) / 2, TIC80_WIDTH, launcher->anim.val.menuHeight, tic_color_red);
     //tic_api_rect(tic, 5, 5, 5, 5, tic_color_red);
+    tic_api_rect(tic, launcher->anim.val.pos + 20, 10, 20, 20, tic_color_red);
+    tic_api_rect(tic, launcher->menu.pos + 20, 30, 20, 20, tic_color_blue);
     if (launcher->screen == SCREEN_MAIN)
     {
         //printf("\nlauncher.c drawMenu launcher->screen == SCREEN_MAIN");
@@ -728,8 +730,17 @@ static void move(Launcher* launcher, s32 dir)
     launcher->menu.target = (launcher->menu.pos + launcher->menu.count + dir) % launcher->menu.count;
     printf("\nlauncher.c move launcher->menu.target = %i after.", launcher->menu.target);
 
+    // Okay... so anim.move is a Movie that is contained in the anim struct of the Launcher
+    // anim.move.items are Anim Object(s) contained within the Movie
     Anim* anim = launcher->anim.move.items;
+    printf("\nlauncher.c move: anim.move.items->start = %i before", anim->start);
+    printf("\nlauncher.c move: anim.move.items->end = %i before", anim->end);
+    // anim is now a new Anim i think? and its assigned to the items within the Movie called "move"
     anim->end = (launcher->menu.target - launcher->menu.pos) * MENU_HEIGHT;
+    printf("\nlauncher.c move: anim.move.items->start = %i after", anim->start);
+    printf("\nlauncher.c move: anim.move.items->end = %i after", anim->end);
+    // the end value of the anim has been assigned... but I do not understand when the start value was assigned...
+    // I also do not understand how this ends up moving the directorylist up and down
     printf("\nlauncher.c move calling resetMovie");
     launcher->anim.movie = resetMovie(&launcher->anim.move);
 }
@@ -962,6 +973,7 @@ static void freeAnim(Launcher* launcher)
 
 static void moveDone(void* data)
 {
+    printf("\nlauncher.c moveDone Called");
     Launcher* launcher = data;
     launcher->menu.pos = launcher->menu.target;
     launcher->anim.val.pos = 0;
@@ -1014,7 +1026,18 @@ void initLauncher(Launcher* launcher, Studio* studio, struct Console* console)
                 {MENU_HEIGHT, 0, ANIM, &launcher->anim.val.menuHeight, AnimEaseIn},
                 {COVER_FADEIN, COVER_FADEOUT, ANIM, &launcher->anim.val.coverFade, AnimEaseIn},
             }),
-
+            // This is where .move movie is designed... i think
+            // Alright so 9 is the TIME
+            // moveDone is the DONE
+            // The rest of it is within two {} brackets... I do not know why, but it looks like an Anim Object
+            // 0 is start
+            // 0 is end
+            // 9 is time ... again?
+            // &launcher->anim.val.pos is the value
+            // lastly AnimLinear is the AnimEffect.
+            // Current theory, the animation system is a thing that lerps two given values at a rate of Time on the sidelines...
+            // As it lerps those values it assigns them to the Value property, and when it is done calls its Done function.
+            // So, if I want to move things horizontally, I need to change how anim.val.pos is interacted with... ? I guess? lol
             .move = MOVIE_DEF(9, moveDone, {{0, 0, 9, &launcher->anim.val.pos, AnimLinear}}),
 
             .gotodir =

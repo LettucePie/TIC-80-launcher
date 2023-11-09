@@ -832,6 +832,7 @@ static void freeAnim(Surf* surf)
 
 static void moveDone(void* data)
 {
+    printf("\nsurf.c moveDone Called");
     Surf* surf = data;
     surf->menu.pos = surf->menu.target;
     surf->anim.val.pos = 0;
