@@ -181,15 +181,17 @@ static void drawMenu(Launcher* launcher, s32 x, s32 y)
         // Create 3 Icons.
         // Start by setting useful dimension values
         s32 div_x = TIC80_WIDTH / 3;
-        s32 icon_w = div_x - 14;
-        s32 div_y = TIC80_HEIGHT / 3;
-        s32 icon_y = div_y - 20;
+        s32 w_pad = 14;
+        s32 icon_w = div_x - w_pad;
+        s32 div_y = TIC80_HEIGHT / 2;
+        s32 h_pad = 20;
+        s32 icon_h = div_y - h_pad;
         // Icon One
-        tic_api_rect(tic, div_x - icon_w, div_y - (icon_y / 2), icon_w, icon_y, tic_color_white);
+        tic_api_rect(tic, w_pad / 2, div_y - (icon_h / 2), icon_w, icon_h, tic_color_white);
         // Icon Two
-        tic_api_rect(tic, div_x * 2 - icon_w, div_y - (icon_y / 2), icon_w, icon_y, tic_color_white);
+        tic_api_rect(tic, div_x + (w_pad / 2), div_y - (icon_h / 2), icon_w, icon_h, tic_color_white);
         // Icon Three
-        tic_api_rect(tic, div_x * 3 - icon_w, div_y - (icon_y / 2), icon_w, icon_y, tic_color_white);
+        tic_api_rect(tic, div_x * 2 + (w_pad / 2), div_y - (icon_h / 2), icon_w, icon_h, tic_color_white);
         //printf("\nlauncher.c drawMenu div value = %i", div);
         //tic_api_rect(tic, TIC80_WIDTH)
     }
