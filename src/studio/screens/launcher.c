@@ -177,30 +177,24 @@ static void drawColumns(Launcher* launcher)
 static void drawMenu(Launcher* launcher, s32 x, s32 y)
 {
     // This is drawn every frame.
-    //printf("\nlauncher.c drawMenu Called");
-    //printf("\nlauncher.c drawMenu: assigning tic from launcher-tic");
-    tic_mem* tic = launcher->tic;
-    //printf("\nlauncher.c drawMenu: declaring enum Height = MENU_HEIGHT");
-    enum {Height = MENU_HEIGHT};
 
-    //tic_api_rect(tic, 0, y + (MENU_HEIGHT - launcher->anim.val.menuHeight) / 2, TIC80_WIDTH, launcher->anim.val.menuHeight, tic_color_red);
-    //tic_api_rect(tic, 5, 5, 5, 5, tic_color_red);
-    s32 xm = y - launcher->menu.pos * MENU_HEIGHT + (MENU_HEIGHT - TIC_FONT_HEIGHT) / 2 - launcher->anim.val.pos;
-    //tic_api_rect(tic, launcher->anim.val.pos + 20, 10, 20, 20, tic_color_red);
-    //tic_api_rect(tic, launcher->menu.pos + 20, 30, 20, 20, tic_color_blue);
-    tic_api_rect(tic, xm, 10, 20, 20, tic_color_red);
+    // Vars for working
+    tic_mem* tic = launcher->tic;
+    enum {Height = MENU_HEIGHT};
+    // Vars for Dimensions
+    s32 div_x = TIC80_WIDTH / 3;
+    s32 w_pad = 14;
+    s32 icon_w = div_x - w_pad;
+    s32 div_y = TIC80_HEIGHT / 2;
+    s32 h_pad = 20;
+    s32 icon_h = div_y - h_pad;
+    s32 y_pos = div_y - (icon_h / 2);
+    // Drawing the Selector position based on launcher->menu.pos
+    tic_api_rect(tic, launcher->menu.pos - 1, y_pos - 1, icon_w + 2, icon_h + 2, tic_color_red);
+
     if (launcher->screen == SCREEN_MAIN)
     {
-        //printf("\nlauncher.c drawMenu launcher->screen == SCREEN_MAIN");
         // Create 3 Icons.
-        // Start by setting useful dimension values
-        s32 div_x = TIC80_WIDTH / 3;
-        s32 w_pad = 14;
-        s32 icon_w = div_x - w_pad;
-        s32 div_y = TIC80_HEIGHT / 2;
-        s32 h_pad = 20;
-        s32 icon_h = div_y - h_pad;
-        s32 y_pos = div_y - (icon_h / 2);
         // Icon One
         tic_api_rect(tic, w_pad / 2, y_pos, icon_w, icon_h, tic_color_white);
         // Icon Two
@@ -219,7 +213,10 @@ static void drawMenu(Launcher* launcher, s32 x, s32 y)
         const char* label_3 = "SETTINGS";
         tic_api_print(tic, label_3, div_x * 2 + (w_pad / 2), y_pos + icon_h + 5, tic_color_black, false, 1, false);
         tic_api_print(tic, label_3, div_x * 2 + (w_pad / 2), y_pos + icon_h + 4, tic_color_white, false, 1, false);
-
+        //printf("\nlauncher.c drawMenu: Icon One X Pos = %i", w_pad / 2);
+        //printf("\nlauncher.c drawMenu: Icon Two X Pos = %i", div_x + (w_pad / 2));
+        //printf("\nlauncher.c drawMenu: Icon Three X Pos = %i", div_x * 2 + (w_pad / 2));
+        // 7, 87, 167
     }
     else
     {
@@ -353,6 +350,7 @@ static void addMenuItemsDone(void* data)
 
 static void resetMenu(Launcher* launcher)
 {
+    printf("\nlauncher.c resetMenu Called");
     if(launcher->menu.items)
     {
         for(s32 i = 0; i < launcher->menu.count; i++)
@@ -373,7 +371,7 @@ static void resetMenu(Launcher* launcher)
         launcher->menu.count = 0;
     }
 
-    launcher->menu.pos = 0;
+    launcher->menu.pos = 7;
     launcher->menu.column = 0;
 }
 
@@ -728,35 +726,60 @@ static void loadCart(Launcher* launcher)
 
 static void move(Launcher* launcher, s32 dir)
 {
+    // menu.target will be the target id of what the selector should load/interact with
+    // menu.pos will be the position of the selector in actual pixel space, not index.
     printf("\nlauncher.c move Called");
-    if(launcher->menu.target == launcher->menu.count && dir > 0)
-    {
-        printf("\nlauncher.c move: Move has reached end");
-    }
-    if(launcher->menu.pos == 0 && dir < 0)
-    {
-        printf("\nlauncher.c move: Selector on Left Side, Move Gallery to the Right");
-    }
-    if(launcher->menu.pos == 2 && dir > 1)
-    {
-        printf("\nlauncher.c move: Selector on Right Side, Move Gallery to the Left");
-    }
-    printf("\nlauncher.c move launcher->menu.pos = %i", launcher->menu.pos);
-    printf("\nlauncher.c move launcher->menu.target = %i before.", launcher->menu.target);
-    launcher->menu.target = (launcher->menu.count + dir) % launcher->menu.count;
-    printf("\nlauncher.c move launcher->menu.target = %i after.", launcher->menu.target);
 
+    //launcher->menu.target = (launcher->menu.count + dir) % launcher->menu.count;
     // Okay... so anim.move is a Movie that is contained in the anim struct of the Launcher
     // anim.move.items are Anim Object(s) contained within the Movie
     Anim* anim = launcher->anim.move.items;
     printf("\nlauncher.c move: anim.move.items->start = %i before", anim->start);
     printf("\nlauncher.c move: anim.move.items->end = %i before", anim->end);
+    printf("\nlauncher.c move: launcher->menu.target = %i before", launcher->menu.target);
+    if(dir > 0)
+    {
+        printf("\nlauncher.c move: input is Positive");
+        if(launcher->menu.target < launcher->menu.count - 1)
+        {
+            launcher->menu.target = launcher->menu.target + 1;
+        }
+        if(anim->end < 167)
+        {
+            printf("\nlauncher.c move: Add 80 to end after setting start to end");
+            anim->start = anim->end;
+            anim->end = anim->end + 80;
+        }
+        else
+        {
+            printf("\nlauncher.c move: Selector already at left side... Check if Gallery can Scroll");
+        }
+    }
+    else
+    {
+        printf("\nlauncher.c move: input is Negative");
+        if(launcher->menu.target > 0)
+        {
+            launcher->menu.target = launcher->menu.target - 1;
+        }
+        if(anim->end > 7)
+        {
+            printf("\nlauncher.c move: Subtract 80 to end after setting start to end");
+            anim->start = anim->end;
+            anim->end = anim->end - 80;
+        }
+        else
+        {
+            printf("\nlauncher.c move: Selector already at right side... Check if Gallery can Scroll");
+        }
+    }
     // anim is now a new Anim i think? and its assigned to the items within the Movie called "move"
-    anim->end = (launcher->menu.target - launcher->menu.pos) * MENU_HEIGHT;
+    // Assigning Start and End for Anim
     printf("\nlauncher.c move: anim.move.items->start = %i after", anim->start);
     printf("\nlauncher.c move: anim.move.items->end = %i after", anim->end);
-    // the end value of the anim has been assigned... but I do not understand when the start value was assigned...
-    // I also do not understand how this ends up moving the directorylist up and down
+    printf("\nlauncher.c move: launcher->menu.target = %i after", launcher->menu.target);
+    //anim->end = (launcher->menu.target - launcher->menu.pos) * MENU_HEIGHT;
+
     printf("\nlauncher.c move calling resetMovie");
     launcher->anim.movie = resetMovie(&launcher->anim.move);
 }
@@ -991,8 +1014,11 @@ static void moveDone(void* data)
 {
     printf("\nlauncher.c moveDone Called");
     Launcher* launcher = data;
-    launcher->menu.pos = launcher->menu.target;
+    printf("\nlauncher.c moveDone assigning menu.pos to anim.val.pos");
+    launcher->menu.pos = launcher->anim.val.pos;
+    printf("\nlauncher.c moveDone assigning anim.val.pos = 0");
     launcher->anim.val.pos = 0;
+    printf("\nlauncher.c moveDone calling reset move and setting anim.idle");
     launcher->anim.movie = resetMovie(&launcher->anim.idle);
 }
 
@@ -1054,7 +1080,7 @@ void initLauncher(Launcher* launcher, Studio* studio, struct Console* console)
             // Current theory, the animation system is a thing that lerps two given values at a rate of Time on the sidelines...
             // As it lerps those values it assigns them to the Value property, and when it is done calls its Done function.
             // So, if I want to move things horizontally, I need to change how anim.val.pos is interacted with... ? I guess? lol
-            .move = MOVIE_DEF(9, moveDone, {{0, 0, 9, &launcher->anim.val.pos, AnimLinear}}),
+            .move = MOVIE_DEF(9, moveDone, {{7, 7, 9, &launcher->anim.val.pos, AnimLinear}}),
 
             .gotodir =
             {
