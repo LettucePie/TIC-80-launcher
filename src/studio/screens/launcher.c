@@ -733,9 +733,11 @@ static void move(Launcher* launcher, s32 dir)
     //launcher->menu.target = (launcher->menu.count + dir) % launcher->menu.count;
     // Okay... so anim.move is a Movie that is contained in the anim struct of the Launcher
     // anim.move.items are Anim Object(s) contained within the Movie
-    Anim* anim = launcher->anim.move.items;
-    printf("\nlauncher.c move: anim.move.items->start = %i before", anim->start);
-    printf("\nlauncher.c move: anim.move.items->end = %i before", anim->end);
+    //Anim* anim = launcher->anim.move.items;
+    //printf("\nlauncher.c move: anim.move.items->start = %i before", anim->start);
+    //printf("\nlauncher.c move: anim.move.items->end = %i before", anim->end);
+
+    // Okay so like, i'm done with this animation thing right now lol
     printf("\nlauncher.c move: launcher->menu.target = %i before", launcher->menu.target);
     if(dir > 0)
     {
@@ -744,11 +746,12 @@ static void move(Launcher* launcher, s32 dir)
         {
             launcher->menu.target = launcher->menu.target + 1;
         }
-        if(anim->end < 167)
+        if(launcher->menu.pos < 167)
         {
             printf("\nlauncher.c move: Add 80 to end after setting start to end");
-            anim->start = anim->end;
-            anim->end = anim->end + 80;
+            launcher->menu.pos = launcher->menu.pos + 80;
+            //anim->start = anim->end;
+            //anim->end = anim->end + 80;
         }
         else
         {
@@ -762,11 +765,12 @@ static void move(Launcher* launcher, s32 dir)
         {
             launcher->menu.target = launcher->menu.target - 1;
         }
-        if(anim->end > 7)
+        if(launcher->menu.pos > 7)
         {
             printf("\nlauncher.c move: Subtract 80 to end after setting start to end");
-            anim->start = anim->end;
-            anim->end = anim->end - 80;
+            launcher->menu.pos = launcher->menu.pos - 80;
+            //anim->start = anim->end;
+            //anim->end = anim->end - 80;
         }
         else
         {
@@ -775,13 +779,13 @@ static void move(Launcher* launcher, s32 dir)
     }
     // anim is now a new Anim i think? and its assigned to the items within the Movie called "move"
     // Assigning Start and End for Anim
-    printf("\nlauncher.c move: anim.move.items->start = %i after", anim->start);
-    printf("\nlauncher.c move: anim.move.items->end = %i after", anim->end);
+    //printf("\nlauncher.c move: anim.move.items->start = %i after", anim->start);
+    //printf("\nlauncher.c move: anim.move.items->end = %i after", anim->end);
     printf("\nlauncher.c move: launcher->menu.target = %i after", launcher->menu.target);
     //anim->end = (launcher->menu.target - launcher->menu.pos) * MENU_HEIGHT;
 
-    printf("\nlauncher.c move calling resetMovie");
-    launcher->anim.movie = resetMovie(&launcher->anim.move);
+    //printf("\nlauncher.c move calling resetMovie");
+    //launcher->anim.movie = resetMovie(&launcher->anim.move);
 }
 
 static void processGamepad(Launcher* launcher)
@@ -1013,12 +1017,13 @@ static void freeAnim(Launcher* launcher)
 static void moveDone(void* data)
 {
     printf("\nlauncher.c moveDone Called");
+    printf("\nlauncher.c moveDone: This function should be retired for now...");
     Launcher* launcher = data;
     printf("\nlauncher.c moveDone assigning menu.pos to anim.val.pos");
     launcher->menu.pos = launcher->anim.val.pos;
     printf("\nlauncher.c moveDone assigning anim.val.pos = 0");
     launcher->anim.val.pos = 0;
-    printf("\nlauncher.c moveDone calling reset move and setting anim.idle");
+    printf("\nlauncher.c moveDone calling resetMovie and setting anim.idle");
     launcher->anim.movie = resetMovie(&launcher->anim.idle);
 }
 
