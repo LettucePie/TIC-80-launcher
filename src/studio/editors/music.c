@@ -816,6 +816,7 @@ static void copyToClipboard(Music* music, bool cut)
     {
     case MUSIC_TRACKER_TAB: copyTrackerToClipboard(music, cut); break;
     case MUSIC_PIANO_TAB: copyPianoToClipboard(music, cut); break;
+    case MUSIC_TAB_COUNT: break; // No-op.
     }
 }
 
@@ -825,6 +826,7 @@ static void copyFromClipboard(Music* music)
     {
     case MUSIC_TRACKER_TAB: copyTrackerFromClipboard(music); break;
     case MUSIC_PIANO_TAB: copyPianoFromClipboard(music); break;
+    case MUSIC_TAB_COUNT: break; // No-op.
     }
 }
 
@@ -1053,6 +1055,11 @@ static void setChannelPattern(Music* music, s32 delta, s32 channel)
     setChannelPatternValue(music, pattern + delta, music->frame, channel);
 }
 
+static inline bool keyWasPressedOnce(tic_mem* tic, s32 key)
+{
+    return tic_api_keyp(tic, key, -1, -1);
+}
+
 static void processTrackerKeyboard(Music* music)
 {
     tic_mem* tic = music->tic;
@@ -1102,6 +1109,9 @@ static void processTrackerKeyboard(Music* music)
                 resetSelection(music);
         }
 
+    static const u8 newOctaveIndex = 16;
+    static const u8 keboardShift = 5;
+
     static const u8 Piano[] =
     {
         tic_key_z,
@@ -1116,6 +1126,11 @@ static void processTrackerKeyboard(Music* music)
         tic_key_n,
         tic_key_j,
         tic_key_m,
+        tic_key_comma,
+        tic_key_l,
+        tic_key_period,
+        tic_key_semicolon,
+        tic_key_slash,
 
         // octave +1
         tic_key_q,
@@ -1147,7 +1162,12 @@ static void processTrackerKeyboard(Music* music)
         {
         case ColumnNote:
         case ColumnSemitone:
-            if (keyWasPressed(music->studio, tic_key_1) || keyWasPressed(music->studio, tic_key_a))
+            if(keyWasPressedOnce(tic, tic_key_z) && shift) 
+                music->last.octave -= 1;
+            else if(keyWasPressedOnce(tic, tic_key_x) && shift) 
+                music->last.octave += 1;
+
+            if (keyWasPressed(music->studio, tic_key_a))
             {
                 setStopNote(music);
                 downRow(music);
@@ -1158,17 +1178,17 @@ static void processTrackerKeyboard(Music* music)
 
                 for (s32 i = 0; i < COUNT_OF(Piano); i++)
                 {
-                    if (keyWasPressed(music->studio, Piano[i]))
+                    if (keyWasPressed(music->studio, Piano[i]) && !shift)
                     {
-                        s32 note = i % NOTES;
-                        s32 octave = i / NOTES + music->last.octave;
+                        s32 note = (i > newOctaveIndex ? i - keboardShift : i)  % NOTES;
+                        s32 octave = (i - note) / NOTES + music->last.octave;
                         s32 sfx = music->last.sfx;
                         setNote(music, note, octave, sfx);
 
                         downRow(music);
 
                         break;
-                    }               
+                    } 
                 }
             }
             break;
@@ -1561,6 +1581,9 @@ static void processKeyboard(Music* music)
         break;
     case MUSIC_PIANO_TAB:
         processPianoKeyboard(music);
+        break;
+    case MUSIC_TAB_COUNT:
+        // No-op.
         break;
     }
 }
@@ -2968,6 +2991,7 @@ static void tick(Music* music)
     {
     case MUSIC_TRACKER_TAB: drawTrackerLayout(music, 7, 35); break;
     case MUSIC_PIANO_TAB: drawPianoLayout(music); break;
+    case MUSIC_TAB_COUNT: break; // No-op.
     }
 
     drawMusicToolbar(music);

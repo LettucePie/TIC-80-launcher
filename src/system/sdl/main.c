@@ -1825,7 +1825,7 @@ s32 determineMaximumScale()
     int maxScaleByW = current.w / TIC80_WIDTH;
     int maxScaleByH = current.h / TIC80_HEIGHT;
 
-    if (maxScaleByW < maxScaleByW)
+    if (maxScaleByH < maxScaleByW)
     {
         maxScale = maxScaleByW;
     }
@@ -1846,6 +1846,9 @@ s32 determineMaximumScale()
 
 static s32 start(s32 argc, char **argv, const char* folder)
 {
+#if defined(__MACOSX__)
+    SDL_SetHint(SDL_HINT_RENDER_DRIVER, "opengl");
+#endif
     int result = SDL_Init(SDL_INIT_VIDEO);
     if (result != 0)
     {
@@ -1920,6 +1923,8 @@ static s32 start(s32 argc, char **argv, const char* folder)
 
                     if(delay > 0)
                         SDL_Delay((u32)(delay * 1000 / SDL_GetPerformanceFrequency()));
+                    else if(delay < 0)
+                        nextTick = SDL_GetPerformanceCounter();
                 }
             }
 #endif
