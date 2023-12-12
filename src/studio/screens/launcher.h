@@ -94,7 +94,6 @@ struct Launcher
 
     void(*tick)(Launcher* launcher);
     void(*resume)(Launcher* launcher);
-    void (*scanline)(tic_mem* tic, s32 row, void* data);
 };
 
 void initLauncher(Launcher* launcher, Studio* studio, struct Console* console);

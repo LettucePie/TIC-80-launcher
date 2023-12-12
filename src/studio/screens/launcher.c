@@ -965,28 +965,6 @@ static void resume(Launcher* launcher)
     launcher->anim.movie = resetMovie(&launcher->anim.show);
 }
 
-static void scanline(tic_mem* tic, s32 row, void* data)
-{
-    Launcher* launcher = (Launcher*)data;
-
-    if(launcher->menu.count > 0)
-    {
-        const SurfItem* item = getMenuItem(launcher);
-
-        if(item->palette)
-        {
-            if(row == 0)
-            {
-                memcpy(&tic->ram->vram.palette, item->palette, sizeof(tic_palette));
-                fadePalette(&tic->ram->vram.palette, launcher->anim.val.coverFade);
-            }
-
-            return;
-        }
-    }
-
-    studio_menu_anim_scanline(tic, row, NULL);
-}
 
 static void emptyDone(void* data) {}
 
@@ -1117,7 +1095,7 @@ void initLauncher(Launcher* launcher, Studio* studio, struct Console* console)
                 }),
             },
         },
-        .scanline = scanline,
+        //.scanline = scanline,
     };
     printf("\nlauncher.c initLauncher calling resetMovie on launcher-anim.movie");
     launcher->anim.movie = resetMovie(&launcher->anim.idle);

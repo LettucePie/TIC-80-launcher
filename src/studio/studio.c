@@ -2256,6 +2256,7 @@ const tic_mem* studio_mem(Studio* studio)
 
 void studio_tick(Studio* studio, tic80_input input)
 {
+    printf("\nstudio.c studio_tick called");
     tic_mem* tic = studio->tic;
     tic->ram->input = input;
 
@@ -2289,7 +2290,7 @@ void studio_tick(Studio* studio, tic80_input input)
             [TIC_MAP_MODE]      = {map->scanline,           NULL, NULL, map},
             [TIC_WORLD_MODE]    = {studio->world->scanline,    NULL, NULL, studio->world},
             [TIC_SURF_MODE]     = {studio->surf->scanline,     NULL, NULL, studio->surf},
-            [TIC_LAUNCHER_MODE] = {studio->launcher->scanline, NULL, NULL, studio->launcher},
+            //[TIC_LAUNCHER_MODE] = {studio->launcher->scanline, NULL, NULL, studio->launcher},
 #endif
         };
 

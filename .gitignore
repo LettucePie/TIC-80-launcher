@@ -76,6 +76,9 @@ build/windows/example/x64/
 build/windows/test/x64/
 build/windows/test/Debug/
 build/android/bin/
+build/android/.idea/
+build/android/app/.cxx/
+build/android/local.properties
 build/windows/test/Release/
 build/uwp/tic80/x64/
 build/uwp/tic80/ARM/
